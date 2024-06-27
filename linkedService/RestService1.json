@@ -4,9 +4,19 @@
 		"annotations": [],
 		"type": "RestService",
 		"typeProperties": {
-			"url": "https://api.tomorrow.io/v4/weather/history/recent?location=Costa_Rica&timesteps=1d&units=metric&apikey=IXZ8oU7z5yKByObv0qvdP5FbbPDEjzS9",
+			"url": "https://api.tomorrow.io/v4/weather/history/recent?location=Costa_Rica&timesteps1d&units=metric",
 			"enableServerCertificateValidation": true,
-			"authenticationType": "Anonymous"
+			"authenticationType": "Anonymous",
+			"authHeaders": {
+				"apikey": {
+					"type": "AzureKeyVaultSecret",
+					"store": {
+						"referenceName": "AzureKeyVault1",
+						"type": "LinkedServiceReference"
+					},
+					"secretName": "api-key"
+				}
+			}
 		}
 	}
 }
