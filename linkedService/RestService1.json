@@ -1,0 +1,12 @@
+{
+	"name": "RestService1",
+	"properties": {
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "https://api.tomorrow.io/v4/weather/history/recent?location=Costa_Rica&timesteps=1d&units=metric&apikey=IXZ8oU7z5yKByObv0qvdP5FbbPDEjzS9",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
