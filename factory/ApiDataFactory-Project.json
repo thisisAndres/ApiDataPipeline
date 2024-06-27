@@ -1,0 +1,9 @@
+{
+	"name": "ApiDataFactory-Project",
+	"location": "eastus2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "dcf1a6c7-fb11-45e0-ab94-1ad8b07f7419",
+		"tenantId": "c7ba45ad-107e-4187-a0e0-bdbafe09f8c8"
+	}
+}
