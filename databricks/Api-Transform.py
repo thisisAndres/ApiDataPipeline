@@ -1,12 +1,13 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC IMPORTS
+# MAGIC IMPORTS & CONFIGURATIONS
 
 # COMMAND ----------
 
 from datetime import date, timedelta
-from pyspark.sql.functions import explode, col, to_date
+from pyspark.sql.functions import explode, col, to_date, lit
 from py4j.protocol import Py4JJavaError
+spark.conf.set("spark.sql.legacy.timeParserPolicy", "LEGACY")
 
 # COMMAND ----------
 
@@ -52,34 +53,59 @@ timelinesDf = dfRaw.select('timelines')
 
 # COMMAND ----------
 
+locationDf = dfRaw.select('location')
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC TRANSFORMING JSON FORMAT TO TABLE
 
 # COMMAND ----------
 
-expandedDf = timelinesDf.select(
+timelinesDf = timelinesDf.select(
     explode(col('timelines.daily')).alias('daily_data')
 )
 
 # COMMAND ----------
 
-fields = expandedDf.select('daily_data.values.*').columns
+timelinesColumns = timelinesDf.select('daily_data.values.*').columns
+locationColumns = locationDf.select('location.*').columns
 
 # COMMAND ----------
 
-df_flattened = expandedDf.select(
+locationDf = locationDf.select(
+    *[col('location').getItem(locationColumn).alias(locationColumn) for locationColumn in locationColumns]
+)
+today = lit(today)
+locationDf = locationDf.withColumn('time', today)\
+                        .withColumnRenamed('time', 'time_location')
+
+# COMMAND ----------
+
+timelinesDf = timelinesDf.select(
     col('daily_data.time').alias('time'),
-    *[col('daily_data.values').getItem(field).alias(field) for field in fields]
+    *[col('daily_data.values').getItem(timelinesColumn).alias(timelinesColumn) for timelinesColumn in timelinesColumns]
 )
 
 # COMMAND ----------
 
-df_flattened = df_flattened.withColumn('time', to_date(df_flattened.time, 'yyyy-MM-dd'))
+timelinesDf = timelinesDf.withColumn('time', to_date(timelinesDf.time, 'yyyy-MM-dd'))
 
 # COMMAND ----------
 
-df_flattened = df_flattened.filter(df_flattened.time == today)
+timelinesDf = timelinesDf.filter(timelinesDf.time == today)
+
 
 # COMMAND ----------
 
+mergedDf = timelinesDf.join(locationDf, timelinesDf.time == locationDf.time_location)\
+    .drop('time_location')
 
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC LOADING TO BLOB STORAGE
+
+# COMMAND ----------
+
+mergedDf.toPandas().to_parquet("/dbfs/mnt/apidata/Transformed_Data/transformed_data.parquet")
