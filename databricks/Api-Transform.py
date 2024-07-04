@@ -11,6 +11,7 @@ spark.conf.set("spark.sql.legacy.timeParserPolicy", "LEGACY")
 
 # COMMAND ----------
 
+
 # MAGIC %md
 # MAGIC EXTRACTING SOURCE API DATA
 

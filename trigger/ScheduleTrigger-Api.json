@@ -1,0 +1,24 @@
+{
+	"name": "ScheduleTrigger-Api",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "ApiPipeline",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 3,
+				"startTime": "2024-07-02T05:00:00",
+				"timeZone": "Central America Standard Time"
+			}
+		}
+	}
+}
