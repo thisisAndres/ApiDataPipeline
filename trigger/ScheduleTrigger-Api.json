@@ -14,16 +14,27 @@
 		"type": "ScheduleTrigger",
 		"typeProperties": {
 			"recurrence": {
-				"frequency": "Day",
+				"frequency": "Week",
 				"interval": 1,
 				"startTime": "2024-07-02T05:00:00",
 				"timeZone": "Central America Standard Time",
 				"schedule": {
 					"minutes": [
-						0
+						0,
+						20
 					],
 					"hours": [
-						5
+						5,
+						11
+					],
+					"weekDays": [
+						"Monday",
+						"Tuesday",
+						"Wednesday",
+						"Thursday",
+						"Friday",
+						"Saturday",
+						"Sunday"
 					]
 				}
 			}
