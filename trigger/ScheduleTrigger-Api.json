@@ -2,7 +2,7 @@
 	"name": "ScheduleTrigger-Api",
 	"properties": {
 		"annotations": [],
-		"runtimeState": "Started",
+		"runtimeState": "Stopped",
 		"pipelines": [
 			{
 				"pipelineReference": {
