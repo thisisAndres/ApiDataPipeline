@@ -1,0 +1,18 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "ApiDataFactory-Project"
+		},
+		"ADLS_LK_Service_properties_typeProperties_url": {
+			"value": "https://apiprojectstorage.dfs.core.windows.net"
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://kv-apiPipeline.vault.azure.net/"
+		},
+		"RestService1_properties_typeProperties_url": {
+			"value": "https://api.tomorrow.io/v4/weather/history/recent?location=Costa_Rica&timesteps1d&units=metric"
+		}
+	}
+}
