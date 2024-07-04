@@ -15,7 +15,7 @@
 		"typeProperties": {
 			"recurrence": {
 				"frequency": "Minute",
-				"interval": 5,
+				"interval": 3,
 				"startTime": "2024-07-02T05:00:00",
 				"timeZone": "Central America Standard Time"
 			}
