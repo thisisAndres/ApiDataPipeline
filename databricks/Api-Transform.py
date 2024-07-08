@@ -11,7 +11,7 @@ spark.conf.set("spark.sql.legacy.timeParserPolicy", "LEGACY")
 
 # COMMAND ----------
 
-
+# MAGIC
 # MAGIC %md
 # MAGIC EXTRACTING SOURCE API DATA
 
@@ -46,7 +46,8 @@ else:
 # COMMAND ----------
 
 today = date.today().isoformat()
-dfRaw = spark.read.json(f'/mnt/apidata/Raw_Data/weather_data_{today}.csv')
+yesterday = (date.today() - timedelta(days=1)).isoformat()
+dfRaw = spark.read.json(f'/mnt/apidata/Raw_Data/weather_data_{today}.json')
 
 # COMMAND ----------
 
@@ -77,8 +78,8 @@ locationColumns = locationDf.select('location.*').columns
 locationDf = locationDf.select(
     *[col('location').getItem(locationColumn).alias(locationColumn) for locationColumn in locationColumns]
 )
-today = lit(today)
-locationDf = locationDf.withColumn('time', today)\
+yesterday = lit(yesterday)
+locationDf = locationDf.withColumn('time', yesterday)\
                         .withColumnRenamed('time', 'time_location')
 
 # COMMAND ----------
@@ -94,8 +95,16 @@ timelinesDf = timelinesDf.withColumn('time', to_date(timelinesDf.time, 'yyyy-MM-
 
 # COMMAND ----------
 
-timelinesDf = timelinesDf.filter(timelinesDf.time == today)
+timelinesDf = timelinesDf.filter(timelinesDf.time == yesterday)
 
+
+# COMMAND ----------
+
+display(timelinesDf)
+
+# COMMAND ----------
+
+display(locationDf)
 
 # COMMAND ----------
 
@@ -104,9 +113,25 @@ mergedDf = timelinesDf.join(locationDf, timelinesDf.time == locationDf.time_loca
 
 # COMMAND ----------
 
+mergedDf.display()
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC LOADING TO BLOB STORAGE
 
 # COMMAND ----------
 
-mergedDf.toPandas().to_parquet("/dbfs/mnt/apidata/Transformed_Data/transformed_data.parquet")
+transformedDf = spark.read.parquet('/mnt/apidata/Transformed_Data/transformed_data.parquet')
+
+# COMMAND ----------
+
+concatDf = transformedDf.union(mergedDf)
+
+# COMMAND ----------
+
+concatDf.display()
+
+# COMMAND ----------
+
+concatDf.toPandas().to_parquet('/dbfs/mnt/apidata/Transformed_Data/transformed_data.parquet')
