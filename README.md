@@ -1,5 +1,6 @@
-# ApiDataPipeline
-This is a short project that uses Azure technologies to consume daily data from an API and send the data to Azure Synapse for further analisis with PowerBI
+# ApiDataPipeline Sumary
+
+Utilizing Azure native technologies such as Azure Data Factory, Databricks, Azure Data Lake, Synapse, and Power BI, this project aims to build a robust data pipeline. The pipeline will consume data from an API on a daily basis, transform the data using Databricks, and store it in Azure Synapse for advanced analysis and visualization with Power BI.
 
 # Architecture Used
 <img src='Architecture/API _PIPELINE_ARCHITECTURE.png'>
