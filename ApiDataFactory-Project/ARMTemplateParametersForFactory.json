@@ -8,6 +8,9 @@
 		"ADLS_LK_Service_properties_typeProperties_url": {
 			"value": "https://apiprojectstorage.dfs.core.windows.net"
 		},
+		"AzureDatabricks_properties_typeProperties_existingClusterId": {
+			"value": "0701-153554-j3id6mmk"
+		},
 		"AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"value": "https://kv-apiPipeline.vault.azure.net/"
 		},

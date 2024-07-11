@@ -11,6 +11,10 @@
 			"type": "string",
 			"defaultValue": "https://apiprojectstorage.dfs.core.windows.net"
 		},
+		"AzureDatabricks_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "0701-153554-j3id6mmk"
+		},
 		"AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://kv-apiPipeline.vault.azure.net/"
@@ -51,6 +55,9 @@
 					},
 					"ADLS_LK_Service_properties_typeProperties_url": {
 						"value": "[parameters('ADLS_LK_Service_properties_typeProperties_url')]"
+					},
+					"AzureDatabricks_properties_typeProperties_existingClusterId": {
+						"value": "[parameters('AzureDatabricks_properties_typeProperties_existingClusterId')]"
 					},
 					"RestService1_properties_typeProperties_url": {
 						"value": "[parameters('RestService1_properties_typeProperties_url')]"
