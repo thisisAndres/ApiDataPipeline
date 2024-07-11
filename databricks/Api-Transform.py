@@ -6,7 +6,9 @@
 
 from datetime import date, timedelta
 from pyspark.sql.functions import explode, col, to_date, lit
+from pyspark.sql.types import DoubleType
 from py4j.protocol import Py4JJavaError
+
 spark.conf.set("spark.sql.legacy.timeParserPolicy", "LEGACY")
 
 # COMMAND ----------
@@ -117,21 +119,18 @@ mergedDf.display()
 
 # COMMAND ----------
 
+mergedDf = mergedDf.withColumn('visibilityMax', col('visibilityMax').cast(DoubleType()))
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC LOADING TO BLOB STORAGE
 
 # COMMAND ----------
 
-transformedDf = spark.read.parquet('/mnt/apidata/Transformed_Data/transformed_data.parquet')
+mergedDf.write.format('delta').mode('append').save('/mnt/apidata/Transformed_Data_v2/')
 
 # COMMAND ----------
 
-concatDf = transformedDf.union(mergedDf)
-
-# COMMAND ----------
-
-concatDf.display()
-
-# COMMAND ----------
-
-concatDf.toPandas().to_parquet('/dbfs/mnt/apidata/Transformed_Data/transformed_data.parquet')
+transformedDfV2 = spark.read.format('delta').load('/mnt/apidata/Transformed_Data_v2/')
+transformedDfV2.display()
