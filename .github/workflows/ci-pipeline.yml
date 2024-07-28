@@ -18,6 +18,11 @@ jobs:
     
 
     steps:
+    # Do not remove: useful for debug purposes
+      - name: Dump event JSON and environment
+        run: cat "$GITHUB_EVENT_PATH"; env
+
+    #Checking if PG_DNA_GITHUB_TOKEN exists
       - name: Check PG_DNA_GITHUB_TOKEN
         env:
           PG_DNA_GITHUB_TOKEN: ${{ secrets.PG_DNA_GITHUB_TOKEN }}
@@ -25,7 +30,10 @@ jobs:
             if [[ ! $PG_DNA_GITHUB_TOKEN ]]; then
                 MSG="Secret 'PG_DNA_GITHUB_TOKEN' not found"
                 echo "::ERROR::${MSG}"
+            else
+                ehco "Secret 'PG_DNA_GITHUB_TOKEN' was found succesfully."
             fi
+            
     #To help with Sonar Qube
       - name: Checkout Code
         uses: actions/checkout@v4
