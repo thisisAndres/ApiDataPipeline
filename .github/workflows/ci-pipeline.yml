@@ -31,9 +31,9 @@ jobs:
                 MSG="Secret 'PG_DNA_GITHUB_TOKEN' not found"
                 echo "::ERROR::${MSG}"
             else
-                ehco "Secret 'PG_DNA_GITHUB_TOKEN' was found succesfully."
+                echo "Secret 'PG_DNA_GITHUB_TOKEN' was found succesfully."
             fi
-            
+
     #To help with Sonar Qube
       - name: Checkout Code
         uses: actions/checkout@v4
