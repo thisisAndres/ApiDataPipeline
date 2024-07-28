@@ -23,7 +23,7 @@ jobs:
           PG_DNA_GITHUB_TOKEN: ${{ secrets.PG_DNA_GITHUB_TOKEN }}
         run: |
             if [[ ! $PG_DNA_GITHUB_TOKEN ]]; then
-                MSG = "Secret 'PG_DNA_GITHUB_TOKEN' not found"
+                MSG="Secret 'PG_DNA_GITHUB_TOKEN' not found"
                 echo "::ERROR::${MSG}"
             fi
     #To help with Sonar Qube
