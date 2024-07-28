@@ -1,0 +1,98 @@
+name: Connected Research CI Checks
+
+on:
+  pull_request:
+
+  push:
+    branches:
+      - main
+
+jobs:
+  ci-pipeline-checks:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        python-version: [3.9]
+    
+
+    steps:
+    # Do not remove: useful for debug purposes
+      - name: Dump event JSON and environment
+        run: cat "$GITHUB_EVENT_PATH"; env
+
+      - uses: actions/checkout@v4
+        with:
+            ref: ${{ github.event.pull_request.head.sha }}
+            fetch-depth: 0 
+
+    #Checking if PG_DNA_GITHUB_TOKEN exists
+      - name: Check PG_DNA_GITHUB_TOKEN
+        env:
+          PG_DNA_GITHUB_TOKEN: ${{ secrets.PG_DNA_GITHUB_TOKEN }}
+        run: |
+            if [[ ! $PG_DNA_GITHUB_TOKEN ]]; then
+                MSG="Secret 'PG_DNA_GITHUB_TOKEN' not found"
+                echo "::ERROR::${MSG}"
+            else
+                echo "Secret 'PG_DNA_GITHUB_TOKEN' was found succesfully."
+            fi
+
+      # Log in to Docker Container for CW
+      - name: Login to the GitHub Container Registry for getting Continuous Winning
+        uses: azure/docker-login@v1
+        with:
+          login-server: ghcr.io
+          username: pgcw
+          password: ${{ secrets.PG_DNA_GITHUB_TOKEN }}
+
+      - name: Example of expected PR Title
+        run: |
+          echo "<JiraKEY>-<[0-9]>: Branch description, i.e. CPO-123: Lorem ipsum"
+
+      # CW check. This checks whether the PR title begins with Jira keys. Optionally, you can
+      # specify what are the valid Jira keys e.g., "--jira-keys DSCORE,ASA"
+      - name: Check PR Title
+        uses: ./.github/cw
+        if: startsWith(github.event_name, 'pull_request')
+        with:
+          check: check-pr-title
+          args: "--token ${{ secrets.GITHUB_TOKEN }} --jira-keys LFCR"
+      
+      # Enable Python for your testing
+      - name: Enable Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4.5.0
+        with:
+          python-version: ${{ matrix.python-version }}
+        
+      # CW check. This lints your source code using Flake8. The `continue-on-error` parameter makes
+      # the test green at all times. This is OK since we have a separate red/green state for this
+      - name: Lint Python Including Notebooks
+        uses: ./cw
+        with:
+          check: lint-python
+          args: "--token ${{ secrets.GITHUB_TOKEN }} --dirs .,test/**,src/**,notebooks/**"
+        continue-on-error: true
+
+      # Not part of Continuous Winning! This is running your own tests assuming that:
+      #  * you have enabled the Python environment above
+      #  * you have all the proper dependencies (including `coverage`) installed
+      #  * you are using pytest
+      #  * you have some actual tests defined
+      # Please also remember that the CW environment and your own environment are different
+      - name: Run all tests with coverage
+        run: |
+          coverage erase
+          pytest --cov=src --no-print-logs -p no:cacheprovider src
+          # Also produce a .txt (for continuous winning) and .xml (for SonarQube) report
+          coverage report > coverage.txt
+          coverage xml
+
+      # CW check. This posts the coverage report directly as a PR comment. File `coverage.txt`
+      # produced by the previous steps must exist! The check is only executed if we are on a PR. If
+      # we are not, we have no comment thread, and therefore it does not make sense to post
+      - name: Post Coverage Report
+        uses: ./
+        if: startsWith(github.event_name, 'pull_request')
+        with:
+          check: post-coverage-report
+          args: '--token ${{ secrets.GITHUB_TOKEN }}'

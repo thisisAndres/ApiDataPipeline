@@ -1,0 +1,15 @@
+name: 'P&G Continuous Winning Checks'
+description: 'Action to run Python actions via a minimal Docker container'
+inputs:
+  check:
+    description: 'Check to execute'
+    required: true
+  args:
+    description: 'List of parameters for the check'
+    required: false
+runs:
+  using: docker
+  image: 'docker://ghcr.io/procter-gamble/de-cf-cw/continuous-win:latest'
+  args:
+    - ${{ inputs.check }}
+    - ${{ inputs.args }}
