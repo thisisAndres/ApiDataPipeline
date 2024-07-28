@@ -1,0 +1,31 @@
+name: Connected Research CI Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  ci-pipeline-checks:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        python-version: [3.9]
+    
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+            ${{ github.event.pull_request.head.sha }}
+        
+      - name: Check PG_DNA_GITHUB_TOKEN
+        env:
+          PG_DNA_GITHUB_TOKEN: ${{ secrets.PG_DNA_GITHUB_TOKEN }}
+        run: |
+            echo $PG_DNA_GITHUB_TOKEN
+            echo $github.event.pull_request.head.sha
